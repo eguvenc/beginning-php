@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>json</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        
+    </head>
+    <body>
+        <p>JSON dosya bilgilerini almak için tıklayın:</p>
+        <input id="dugme" type="button" value="Tıkla" onclick="tikla()"/>
+    <div id="sonuc"></div>
+    <script>
+       function tikla()
+       {
+                $.ajax({
+                    type:"GET",
+                        url:"json.php",
+                        dataType:"json",
+                        success: function(data){
+                           
+                            var renk="<ul>";
+                        renk += "<li>"+data[0]["desen"];+"</li>";
+                        renk += "<li>"+data[1]["desen"];+"</li>";
+                        renk += "<li>"+data[2]["desen"];+"</li>";
+                        renk+="</ul>";
+                        $('#sonuc').append(renk);
+                        },
+                        error:function(data){
+                         alert("hata");
+                        }
+                });
+            
+       }
+
+
+//            $('#dugme').click(function(){
+//                alert("ok");
+//                $.ajax({
+//                    type:"GET",
+//                        url:"json.php",
+//                        dataType:"json",
+//                        success: function(data){
+//                            
+//                            var renk="<ul>";
+//                        $.each(data,function(i,n){
+//                            renk+="<li>"+n["desen"]+"</li>";
+//                        });
+//                        renk+="</ul>";
+//                        $('#sonuc').append(renk);
+//                        }
+//                });
+//            });
+      
+    </script>
+    
+    </body>
+    
+</html>
