@@ -252,55 +252,34 @@ class admin
         $sql1 = "SELECT resource_id FROM admin_rule WHERE permission = 'allow' AND role_id = $role_id";
         $getpages = $this->_instance->query($sql1);
         while ($row = $getpages->fetch_array(MYSQLI_ASSOC)) {
-           
+
                     $blocks[] = $row['resource_id'];
                 }
                 $ourpages = '<div class="dropdown">';
+                $ourpagesa = '';
+                $ourpagesli = '';
+                $ourpagesul = '<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">';
                foreach ($blocks as $key => $value) 
                {
-                    //echo $value."<br>";
-                   /* $ourpages = '<div class="dropdown">';
-                    switch ($value) 
-                    {
-                        case 'admin':
-                           $ourpages .="<a id='dLabel role'='button' data-toggle='dropdown' data-target='#' href='#'>ADMIN<span class='caret'></span></a>";
-
-                            break;
-                       case (preg_match('/(admin\/(.*?)\/.*)/', $value) ? true : false):
-                           $ourpages .= "<li>.....</li><li>.....</li>";
-
-                           break;
-                       default :
-                          $ourpages .=  '<span><ul class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>';
-
-                            break;
-                            
-                    }
-
-                    $ourpages .='</div>';*/
-
-                    if ($value == 'admin') {
-                        $ourpages .= "<a id='dLabel role'='button' data-toggle='dropdown' data-target='#' href='#'>ADMIN<span class='caret'></span></a>";
+                     if (preg_match("/(admin)\/(.*?)\/+$/", $value)) {                        
                         
-                    }
+                        $ourpagesa .= "<a id='dLabel role'='button' data-toggle='dropdown' data-target='#' href='#'>$value<span class='caret'></span></a>";
+                        }
                     elseif (preg_match('/(admin\/(.*?)\/.*)/', $value)) {
-                        $ourpages .= "<a href = '$value'><li>".$value."</li></a>";
-                    }
-                    else{
-                        $ourpages .=  '<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">';
+                        $ourpagesli .= "<a href = '$value'><li>".$value."</li></a>";
                     }
 
                     
-              
             }
-            $ourpages .='</ul></div>';
+            $ourpagesEnd ='</ul></div>';
+            return $ourpages.$ourpagesa.$ourpagesul.$ourpagesli.$ourpagesEnd;
 
-            return $ourpages;
           
             
 }
 }  
 	
-  
+  //Array ( [0] => admin [1] => admin/sales [2] => admin/sales/discounts.php [3] => admin/sales/products.php ) 
    
-  
+  //reg1 = preg_match('/\/(.*?)\//', $value,$match)
+  //reg2 = preg_match('/(admin\/(.*?)\/.*)/', $value)
