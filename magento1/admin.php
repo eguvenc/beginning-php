@@ -255,24 +255,36 @@ class admin
 
                     $blocks[] = $row['resource_id'];
                 }
-                $ourpages = '<div class="dropdown">';
+                print_r($blocks); 
+                $ourpages = '';
                 $ourpagesa = '';
                 $ourpagesli = '';
-                $ourpagesul = '<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">';
+                $count = 1;
+                $ourpagesul = '';
                foreach ($blocks as $key => $value) 
-               {
-                     if (preg_match("/(admin)\/(.*?)\/+$/", $value)) {                        
-                        
-                        $ourpagesa .= "<a id='dLabel role'='button' data-toggle='dropdown' data-target='#' href='#'>$value<span class='caret'></span></a>";
+               { 
+                     if (preg_match("/(admin)\/(.*?)\/+$/", $value, $match)) { 
+                        $control = $match[2];
+                        $ourpagesa .= "<li class='dropdown'><a id='dLabel".$count."' role='button' data-toggle='dropdown' data-target='#' href='#'>$match[2]<span class='caret'></span></a>";
                         }
-                    elseif (preg_match('/(admin\/(.*?)\/.*)/', $value)) {
-                        $ourpagesli .= "<a href = '$value'><li>".$value."</li></a>";
+                    elseif (preg_match('/(admin\/(.*?)\/.*)/', $value ,$test)) {
+                            $control1 = $test[2]; 
+                            if($control == $control1)
+                            {
+                                $ourpagesa .= "<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel".$count."'><li><a href = '$value'>".$value."</a></li></ul></li>";
+                                     $count++;
+                            }
+                            else
+                            {
+                                $ourpagesa .="<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel".$count."'><li><a href = '$value'>".$value."</a></li></ul></li>";
+                            }
                     }
+                        
 
-                    
+                 
             }
-            $ourpagesEnd ='</ul></div>';
-            return $ourpages.$ourpagesa.$ourpagesul.$ourpagesli.$ourpagesEnd;
+           $ourpagesEnd ='</li>';
+            return $ourpagesa.$ourpagesul.$ourpagesEnd; 
 
           
             
@@ -283,3 +295,6 @@ class admin
    
   //reg1 = preg_match('/\/(.*?)\//', $value,$match)
   //reg2 = preg_match('/(admin\/(.*?)\/.*)/', $value)
+
+
+//admin/sales/
