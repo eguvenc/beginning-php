@@ -251,50 +251,48 @@ class admin
         $role_id = $getroleid['parent_id'];
         $sql1 = "SELECT resource_id FROM admin_rule WHERE permission = 'allow' AND role_id = $role_id";
         $getpages = $this->_instance->query($sql1);
-        while ($row = $getpages->fetch_array(MYSQLI_ASSOC)) {
-
-                    $blocks[] = $row['resource_id'];
-                }
-                print_r($blocks); 
-                $ourpages = '';
-                $ourpagesa = '';
-                $ourpagesli = '';
-                $count = 1;
-                $ourpagesul = '';
-               foreach ($blocks as $key => $value) 
-               { 
-                     if (preg_match("/(admin)\/(.*?)\/+$/", $value, $match)) { 
-                        $control = $match[2];
+        while ($row = $getpages->fetch_array(MYSQLI_ASSOC)) 
+        {
+            $blocks[] = $row['resource_id'];
+        }
+            print_r($blocks); 
+            $ourpagesa = '';
+            $count = 1;
+            $test = "0";
+            $kont = 0;
+           foreach ($blocks as $key => $value) 
+           { 
+                 if (preg_match("/(admin)\/(.*?)\/+$/", $value,$match)) 
+                 { 
+                    if ($test == 0 ) 
+                    {
                         $ourpagesa .= "<li class='dropdown'><a id='dLabel".$count."' role='button' data-toggle='dropdown' data-target='#' href='#'>$match[2]<span class='caret'></span></a>";
-                        }
-                    elseif (preg_match('/(admin\/(.*?)\/.*)/', $value ,$test)) {
-                            $control1 = $test[2]; 
-                            if($control == $control1)
-                            {
-                                $ourpagesa .= "<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel".$count."'><li><a href = '$value'>".$value."</a></li></ul></li>";
-                                     $count++;
-                            }
-                            else
-                            {
-                                $ourpagesa .="<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel".$count."'><li><a href = '$value'>".$value."</a></li></ul></li>";
-                            }
+                        $test = 1;
                     }
-                        
-
-                 
+                    else
+                    {
+                        $count++;
+                        $ourpagesa .= "</ul></li><li class='dropdown'><a id='dLabel".$count."' role='button' data-toggle='dropdown' data-target='#' href='#'>$match[2]<span class='caret'></span></a>";
+                        $kont=0;
+                    }
+                   
+                 }
+                elseif (preg_match('/(admin\/(.*?)\/.*)/', $value)) 
+                {
+                    if ($kont == 0 ) 
+                    {
+                        $ourpagesa .= "<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel".$count."'><li><a href = '$value'>".$value."</a></li>";
+                        $kont = 1;
+                    }
+                    else
+                        $ourpagesa .="<li><a href = '$value'>".$value."</a></li>";
+                    
+                }      
             }
-           $ourpagesEnd ='</li>';
-            return $ourpagesa.$ourpagesul.$ourpagesEnd; 
+       $ourpagesEnd ='</li>';
+        return $ourpagesa.$ourpagesEnd; 
 
           
             
-}
+    }
 }  
-	
-  //Array ( [0] => admin [1] => admin/sales [2] => admin/sales/discounts.php [3] => admin/sales/products.php ) 
-   
-  //reg1 = preg_match('/\/(.*?)\//', $value,$match)
-  //reg2 = preg_match('/(admin\/(.*?)\/.*)/', $value)
-
-
-//admin/sales/
