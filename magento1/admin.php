@@ -14,7 +14,7 @@ ini_set('display_errors', 'On');
 define("HOST", "localhost");
 define("USER", "root");
 define("PASS", "12345");
-define("DB", "magento1");
+define("DB", "admin");
 
 class admin 
 {
