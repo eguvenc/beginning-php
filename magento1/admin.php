@@ -42,9 +42,6 @@ class admin
     
     public function listUsers()
     {
-
-    	
-
 	 $get =  $this->_instance->query('SELECT username FROM admin_user');
 
 	 $deger ="<table border=1><thead><th><tr><th>Users</th></tr></thead><tbody>";
@@ -56,12 +53,29 @@ class admin
         }
         $deger .="</tbody></table>";
         return $deger;
-
     }
+
+    public function CheckIn($data, $pass)
+    {
+        $get =  $this->_instance->query("SELECT username,password,user_id FROM admin_user WHERE username = '$data' AND password='$pass'");
+        $row = $get->fetch_assoc();
+            $user_id = $row['user_id'];
+            if ($get->num_rows > 0)
+                {
+                    $oturum = $_SESSION['admin']=true;
+                    echo "logged in as ".$data;
+                    $_SESSION['admin'] = $data;
+                }
+            else
+                {
+                    echo "yanlis"; 
+                    header("Refresh: 2; url=login.php");
+                }
+    }
+
     
     function listRoles()
-    {
-            
+    {      
 	 $get = $this->_instance->query('SELECT role_name FROM admin_role WHERE role_type = "G"');
          $deger ="<table border=1><thead><th><tr><th>Roles</th></tr></thead><tbody>";
         
@@ -71,33 +85,30 @@ class admin
                }
                $deger .="</tbody></table>";
                return $deger;
-
-	
-}
+    }
 
     function SaveUser($username, $firstname, $lastname, $email, $password,$is_active)
     {
         if(!empty($_POST['username']) && !empty($_POST['firstname']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['password']))
-    {
-        $username = $_POST['username'];
-        $firstname = $_POST['firstname'];
-        $$lastname = $_POST['lastname'];
-        $email = $_POST['email'];
-        $password = md5($_POST['password']);
-        $isactive = $_POST['is_active'];
-        $created = date('Y/m/d'); 
-        $modified = date('Y/m/d');
-        $logdate = date('Y/m/d');
-        $lognum = 1;
-        $sql = $this->_instance->prepare("INSERT INTO admin_user (firstname,lastname,email,username,password,created,modified,logdate,lognum,is_active) VALUES(?,?,?,?,?,?,?,?,?,?)");
-        $sql->bind_param('ssssssssii', $firstname,$lastname,$email,$username,$password,$created,$modified,$logdate,$lognum,$isactive);
-         $sql->execute();
-    }
-    else
-    {
-        echo 'nothing changed';
-        //header ("location: adduser.php");  
-    }
+        {
+            $username = $_POST['username'];
+            $firstname = $_POST['firstname'];
+            $$lastname = $_POST['lastname'];
+            $email = $_POST['email'];
+            $password = md5($_POST['password']);
+            $isactive = $_POST['is_active'];
+            $created = date('Y/m/d'); 
+            $modified = date('Y/m/d');
+            $logdate = date('Y/m/d');
+            $lognum = 1;
+            $sql = $this->_instance->prepare("INSERT INTO admin_user (firstname,lastname,email,username,password,created,modified,logdate,lognum,is_active) VALUES(?,?,?,?,?,?,?,?,?,?)");
+            $sql->bind_param('ssssssssii', $firstname,$lastname,$email,$username,$password,$created,$modified,$logdate,$lognum,$isactive);
+             $sql->execute();
+        }
+        else
+        {
+            echo 'nothing changed';
+        }
 
     }
 
@@ -111,11 +122,9 @@ class admin
         );
     if ( isset($_POST['resource']))
     {
-         $ad = $_POST['role_name'];    
-         $get = $this->_instance->query("INSERT INTO admin_role (parent_id,tree_level,sort_order,role_type,user_id,role_name) VALUES (0,1,0,'G',0,'$ad')");  	
-
-         $last = $this->_instance->insert_id;
-
+        $ad = $_POST['role_name'];    
+        $get = $this->_instance->query("INSERT INTO admin_role (parent_id,tree_level,sort_order,role_type,user_id,role_name) VALUES (0,1,0,'G',0,'$ad')");  	
+        $last = $this->_instance->insert_id;
         $resources = $_POST['resource'];
         $allowedPermissions = array();
         foreach($resources as $k => $resource_id)
@@ -130,27 +139,23 @@ class admin
             $disAllowedPermissions[$dis_resource_id] = "deny";
         }
 
+            $totable = array_merge($allowedPermissions, $disAllowedPermissions );
+            echo '<hr>';
+        $sql = "INSERT INTO admin_rule
+          (role_id,resource_id,role_type, permission)
+        VALUES ";
 
+        foreach($totable as $key => $value ){
+            $sql.= "('$last','$key','G','$value'),";
+        }
+        $sql = substr($sql, 0, -1);
 
-        $totable = array_merge($allowedPermissions, $disAllowedPermissions );
-        //print_r($totable);
-        echo '<hr>';
-    $sql = "INSERT INTO admin_rule
-      (role_id,resource_id,role_type, permission)
-    VALUES ";
-
-    foreach($totable as $key => $value ){
-        $sql.= "('$last','$key','G','$value'),";
-    }
-    $sql = substr($sql, 0, -1);
-
-     $get = $this->_instance->query($sql);
-    }
+         $get = $this->_instance->query($sql);
+        }
     }
     
     function listToPermit()
     {
-
         $get =  $this->_instance->query('SELECT username FROM admin_user');
 
              $deger ="<select name='users'>";
@@ -165,67 +170,62 @@ class admin
 
    function Permit($selectedrole,$selecteduser)
     {
-        if(isset($_POST['users']) && isset($_POST['roles']))
-    {
-            $sql = "SELECT role_id FROM admin_role WHERE role_name  LIKE '%$selectedrole%' " ;
-            $get =  $this->_instance->query($sql);
-            $row = $get->fetch_assoc();
-            $role_id = $row['role_id'];
-            $sql = "SELECT user_id,firstname FROM admin_user WHERE username =  '$selecteduser'" ;
-            $take =  $this->_instance->query($sql);
-            $row = $take->fetch_assoc();
-            $firstname = $row['firstname'];
-            $user_id = $row['user_id'];
-            $finalsql  =  "INSERT INTO admin_role (parent_id,tree_level,sort_order,role_type,user_id,role_name)VALUES ($role_id,2,0,'U','$user_id','$selecteduser') "; 
-            $final = $this->_instance->query($finalsql);
-    }          
-    else 
-       echo 'kullanici ve rol secin!';
+            if(isset($_POST['users']) && isset($_POST['roles']))
+            {
+                $sql = "SELECT role_id FROM admin_role WHERE role_name  LIKE '%$selectedrole%' " ;
+                $get =  $this->_instance->query($sql);
+                $row = $get->fetch_assoc();
+                $role_id = $row['role_id'];
+                $sql = "SELECT user_id,firstname FROM admin_user WHERE username =  '$selecteduser'" ;
+                $take =  $this->_instance->query($sql);
+                $row = $take->fetch_assoc();
+                $firstname = $row['firstname'];
+                $user_id = $row['user_id'];
+                $finalsql  =  "INSERT INTO admin_role (parent_id,tree_level,sort_order,role_type,user_id,role_name)VALUES ($role_id,2,0,'U','$user_id','$selecteduser') "; 
+                $final = $this->_instance->query($finalsql);
+            }          
+            else 
+                echo 'kullanici ve rol secin!';
     }
     function RolesToPermit()
     {
-
-
-             $get =  $this->_instance->query('SELECT role_name,role_id FROM admin_role WHERE role_type = "G"');
-
-            $deger = "<select name='roles'>";
-
-            while ($row = $get->fetch_assoc()) 
-                    
+        $get =  $this->_instance->query('SELECT role_name,role_id FROM admin_role WHERE role_type = "G"');
+        $deger = "<select name='roles'>";
+            while ($row = $get->fetch_assoc())      
             {    
                 $deger .= "<option value=".$row['role_name'].">".$row['role_name']."</option>";
             }
-            $deger .="</select>";
-            return $deger;
+        $deger .="</select>";
+        return $deger;
     }
 
      function showPermissions($role_id)  
     {
-                    $sql = "SELECT resource_id,permission FROM admin_rule WHERE role_id = ".$role_id. "";
-                    $get = $this->_instance->query($sql);
-                    $deger = "";
-                    while ($li = $get->fetch_assoc())
-                    {
-                        if($li['permission'] == 'allow')
-                            $deger .= "<li><input type='hidden' name='permissionid' value='".$role_id."'/> <input type = 'checkbox' name='perm[]' value='".$li['resource_id']."' checked = 'checked' />".$li['resource_id']."</li>";
-                        elseif($li['permission'] == 'deny')
-                            $deger .= "<li><input type='hidden' name='permissionid' value='".$role_id."'/><input type = 'checkbox' name='perm[]' value='".$li['resource_id']."'/>".$li['resource_id']."</li>";
-                    }
-                    $deger .= "</li><input type='submit'value = 'edit changes' name='edit' id='edit' />"; 
-                   
-                    return $deger;
+        $sql = "SELECT resource_id,permission FROM admin_rule WHERE role_id = ".$role_id. "";
+        $get = $this->_instance->query($sql);
+        $deger = "";
+            while ($li = $get->fetch_assoc())
+            {
+                if($li['permission'] == 'allow')
+                    $deger .= "<li><input type='hidden' name='permissionid' value='".$role_id."'/> <input type = 'checkbox' name='perm[]' value='".$li['resource_id']."' checked = 'checked' />".$li['resource_id']."</li>";
+                elseif($li['permission'] == 'deny')
+                    $deger .= "<li><input type='hidden' name='permissionid' value='".$role_id."'/><input type = 'checkbox' name='perm[]' value='".$li['resource_id']."'/>".$li['resource_id']."</li>";
+            }
+            $deger .= "</li><input type='submit'value = 'edit changes' name='edit' id='edit' />"; 
+           
+            return $deger;
     }
+
     function RoleToEdit()
     {
         $get = $this->_instance->query("SELECT role_id,role_name FROM admin_role WHERE role_type ='G'");
          $deger = "<select name='rolestoedit'>";
 
             while ($row = $get->fetch_assoc()) 
-                    
             {    
                 $deger .= "<option value=".$row['role_id'].">".$row['role_name']."</option>";
               
-           }
+            }
             $deger .="</select>";
             return $deger;
     }
@@ -290,9 +290,6 @@ class admin
                 }      
             }
        $ourpagesEnd ='</li>';
-        return $ourpagesa.$ourpagesEnd; 
-
-          
-            
+        return $ourpagesa.$ourpagesEnd;       
     }
 }  
