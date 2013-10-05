@@ -19,8 +19,7 @@ if(!empty($data) && !empty($pass))
                           $oturum = $_SESSION['admin']=true;
                           echo "logged in as ".$data;
                           $_SESSION['admin'] = $data;
-                          
-                        header("Refresh: 2; url=panel.php"); 
+                          header("Refresh: 2; url=panel.php"); 
                         }
                         else 
                         {   

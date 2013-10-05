@@ -1,4 +1,5 @@
  <?php 
+ $_SESSION['admin'] = $data;
 	error_reporting(E_ALL);
 	ini_set('display_errors', 'On');
 	include 'admin.php'; 
@@ -8,7 +9,7 @@
     	{		
     		$pages = new admin();
     		$usercheck = $pages->CheckIn($data, $pass);
-    		echo $usercheck->user_id;exit;
+    		$user_id = $pages->getUserIds($data,$pass);
     		$enablepages = $pages->EnablePages($user_id);
     	}
     	else
@@ -18,7 +19,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	 <title>Bootstrap 101 Template</title>
+	 <title>Admin Panel</title>
 	 <link href="bootstrap.css" rel="stylesheet" media="screen"/>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src="bootstrap.js"></script>

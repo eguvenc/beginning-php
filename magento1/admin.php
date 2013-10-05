@@ -54,12 +54,17 @@ class admin
         $deger .="</tbody></table>";
         return $deger;
     }
+    public function getUserIds($data,$pass)
+    {
+        $get =  $this->_instance->query("SELECT user_id FROM admin_user WHERE username = '$data' AND password='$pass'");
+        $row = $get->fetch_assoc();
+        return $row['user_id'];
+    }
 
     public function CheckIn($data, $pass)
     {
-        $get =  $this->_instance->query("SELECT username,password,user_id FROM admin_user WHERE username = '$data' AND password='$pass'");
+        $get =  $this->_instance->query("SELECT username,password FROM admin_user WHERE username = '$data' AND password='$pass'");
         $row = $get->fetch_assoc();
-            $user_id = $row['user_id'];
             if ($get->num_rows > 0)
                 {
                     $oturum = $_SESSION['admin']=true;
@@ -69,7 +74,6 @@ class admin
             else
                 {
                     echo "yanlis"; 
-                    header("Refresh: 2; url=login.php");
                 }
     }
 
@@ -255,7 +259,6 @@ class admin
         {
             $blocks[] = $row['resource_id'];
         }
-            print_r($blocks); 
             $ourpagesa = '';
             $count = 1;
             $test = "0";
