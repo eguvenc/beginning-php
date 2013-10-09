@@ -1,16 +1,17 @@
  <?php 
+ session_start();
  $_SESSION['admin'] = $data;
 	error_reporting(E_ALL);
 	ini_set('display_errors', 'On');
-	include 'admin.php'; 
-	$data = $_POST['username'] ;
+	include_once 'admin.php'; 
+	$data = $_POST['username'];
 	$pass =  md5($_POST['password']);
     	if(!empty($data) && !empty($pass))
     	{		
     		$pages = new admin();
     		$usercheck = $pages->CheckIn($data, $pass);
     		$user_id = $pages->getUserIds($data,$pass);
-    		$enablepages = $pages->EnablePages($user_id);
+    		$_SESSION['enablepages'] = $enablepages = $pages->EnablePages($user_id);
     	}
     	else
     		echo 'Eksik Bilgi Girisi!';
@@ -25,6 +26,7 @@
 	<script src="bootstrap.js"></script>
 </head>
 <body>
+	<? echo "<a href=logout.php>Log OUT</a>"; ?>
 	 <? if (isset($usercheck))echo $usercheck;?><? if (isset($enablepages))echo $enablepages;?>
 </body>
 </html>

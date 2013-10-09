@@ -119,10 +119,21 @@ class admin
     function AddRole()
     {
         $definedRoutes = array(
-        '__root__' => '__root__',
-        'admin/sales' => 'admin/sales',
-        'admin/sales/order' => 'admin/sales/order',
-        'admin/sales/order/actions' => 'admin/sales/order/actions'
+        'admin' => 'admin',
+        'admin/sales/' => 'admin/sales/',
+        'admin/sales/products.php' => 'admin/sales/products.php',
+        'admin/sales/discounts.php' => 'admin/sales/discounts.php',
+        'admin/sales/order.php' => 'admin/sales/order.php',
+        'admin/reports/' => 'admin/reports/',
+        'admin/reports/orderreviews.php' => 'admin/reports/orderreviews.php',
+        'admin/reports/sailing.php' => 'admin/reports/sailing.php',
+        'admin/reports/staff.php' => 'admin/reports/staff.php',
+        'admin/system/' => 'admin/system/',
+        'admin/system/permissions.php' => 'admin/system/permissions.php',
+        'admin/system/users.php' => 'admin/system/users.php',
+        'admin/system/index.php' => 'admin/system/index.php',
+        'admin/system/addrole.php' => 'admin/system/addrole.php',
+        'admin/system/adduser.php' => 'admin/system/adduser.php',
         );
     if ( isset($_POST['resource']))
     {

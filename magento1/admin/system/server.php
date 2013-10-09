@@ -3,11 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
   $selecteduser = $_POST['users'];
   $selectedrole = $_POST['roles'];
-
-
-    
-   include 'admin.php';
+  include '../../admin.php';
 $permission = new admin();
 $permission->Permit($selectedrole, $selecteduser);
 
-header('location:permit.php');
+header('location:permissions.php');

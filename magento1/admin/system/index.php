@@ -4,14 +4,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 if (!isset($_SESSION['admin']))
 {
-     header('location: admin/system/login.php'); 
+     header('location: ../../login.php'); 
 }
-$admin = '<a href="adduser.php">Add User</a>'.' ';
-$admin .= '<a href="addrole.php">Add Role</a>'.' ';
-$admin .= '<a href="permit.php">Permissions</a>'.' ';
-$admin .='<a href="logout.php">Log Out</a>';
-
-echo $admin;
 
 echo '<hr>';
 

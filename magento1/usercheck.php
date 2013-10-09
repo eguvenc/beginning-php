@@ -10,3 +10,11 @@
  include_once 'admin.php';
  $usercheck = new admin();
  $accept = $usercheck->SaveUser($username, $firstname, $lastname, $email, $password, $isactive);
+ if ($accept)
+ 	{
+ 		echo 'new user saved';
+ 		header('location:login.php');
+
+ 	}
+ 	else
+ 		echo 'not saved';
